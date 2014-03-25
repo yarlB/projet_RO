@@ -11,6 +11,7 @@
 #define D_PARCOURS_COUT
 #define D_CALL_BEST_CYCLE
 #define D_WHILE_BEST_CYCLE
+#define D_F
 #endif
 
 

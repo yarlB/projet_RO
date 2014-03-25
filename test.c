@@ -13,7 +13,7 @@ int main() {
     C[i] = malloc(nb * sizeof(*C[i]));
     failloc(C[i]);
     for(j=0 ; j<nb ; ++j)
-      C[i][j] = j;
+      C[i][j] = 2;
   }
   
   print_list(l);

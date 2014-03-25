@@ -53,6 +53,11 @@ f(int **C, List *regroup) {
     stack = pop(stack);
     tmp_cost = (int)tmp->head;
     tmp = pop(tmp);
+#ifdef D_F
+    static int loop_nb=0;
+    printf("Tour de boucle %d, on sort de la stack :\ncout : %d liste :", ++loop_nb, tmp_cost);
+    print_list(tmp);
+#endif
     //heuristic : even if the path of spots isn't complete, if the cost of the path + the cost to go from the last spot
     //to the spot zero exceed the lower cost we found so far, then we can not keep going on this branch
     calcul = tmp_cost + (tmp ? C[T[(int)tmp->head]][0] : 0); //if tmp's empty then cost to go from 0 to 0 is...
@@ -73,20 +78,24 @@ f(int **C, List *regroup) {
 	else {
 	  calcul = C[T[i]][0] + tmp_cost; //we had the lowest 'going home' cost
 	  if(tmp)
-	    calcul += C[T[(int)tmp->head]][i]; //if the list isn't empty, the head is the head
+	    calcul += C[T[(int)tmp->head]][T[i]]; //if the list isn't empty, the head is the head
 	  else //the head is 0 (warehouse), then we multiply by 2
 	    calcul <<= 1;
-	  
+#ifdef D_F
+	  printf("calcul : %d\n", calcul);
+#endif
 	  if(calcul < lower_cost) { //interesting
 	    tmp2 = copy(tmp);
 	    tmp2 = push((void*)i, tmp2);
-	    ++len_tmp;
-	    if(len_tmp - 1 == len_regroup) {//very interesting!
+	    if(len_tmp + 1 == len_regroup) {//very interesting! permutation's complete
 	      lower_cost = calcul;
+#ifdef D_F
+	      printf("lower_cost : %d\n", lower_cost);
+#endif
 	      free_list(best);
 	      best = tmp2;
 	    } else {
-	      calcul -= C[T[(int)tmp2->head]][0];
+	      calcul -= C[T[i]][0];
 	      stack = push((void*)push((void*)calcul, tmp2), stack);
 	    }
 	  }
@@ -96,6 +105,12 @@ f(int **C, List *regroup) {
     }
     for(i=0 ; i<len_regroup ; ++i)
       mark[i] = 0;
+  }
+  it = best;
+  best = NULL;
+  while(it) {
+    best = push((void*)T[(int)it->head], best);
+    it = pop(it);
   }
   return push((void*)lower_cost, best);
 }

@@ -1,3 +1,6 @@
+#ifndef FONCTIONS_INCL
+#define FONCTIONS_INCL
+
 #include "globals.c"
 
 //utilise le tri casier pour fournir une liste de clients(numéros de 1 à nbclients) triée
@@ -237,3 +240,5 @@ BC* best_cycle(int **C, List *regroup) {
   }
   return bc;
 }
+
+#endif
