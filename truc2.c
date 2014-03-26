@@ -25,7 +25,7 @@ int best_cost(int **C, List *regroup) {
   while(stack) {
     cost = (int)stack->head;
     stack = pop(stack);
-    last = (List*)stact->head;
+    last = (List*)stack->head;
     stack = pop(stack);
     rest = (List*)stack->head;
     stack = pop(stack);
