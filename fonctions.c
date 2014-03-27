@@ -168,13 +168,14 @@ void bc_cpy(Dir_Int *T, int *T_prime, int *perm, int size) {
 }
 
 //utilisation de l'algorithme Johnson-Trotter pour trouver la meilleure permutation
-BC* best_cycle(int **C, List *regroup) {
+List* best_cycle(int **C, List *regroup) {
   enum{LEFT = -1, RIGHT = 1};
   int size = len(regroup);
   Dir_Int *T = NULL;
   int *T_prime = NULL;
   int i;
   int cout_tmp;
+  List *ret = NULL;
   BC* bc = make_bc(size);
 
 
@@ -238,7 +239,14 @@ BC* best_cycle(int **C, List *regroup) {
 #endif
     }
   }
-  return bc;
+  
+  for(i=0 ; i<bc->size ; ++i) {
+    ret = push((void*)bc->t[i], ret);
+  }
+  free(bc->t);
+  ret = push((void*)bc->cout, ret);
+  free(bc);
+  return ret;
 }
 
 

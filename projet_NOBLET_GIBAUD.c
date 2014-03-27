@@ -10,8 +10,7 @@
 #include <sys/time.h>
 #include <sys/resource.h> /* Bibliothèques utilisées pour mesurer le temps CPU */
 
-#include "fonctions.c" //Notre bibliothèque
-#include "truc.c"
+#include "strategy.c" //Notre bibliothèque
 
 
 /* structures et fonctions de mesure du temps CPU */
@@ -99,6 +98,14 @@ void free_data(donnees *p) {
 }
 
 
+/* Fonction d'initialisation de la structure de données anonyme ALGOS permettant de choisir entre l'algorithme 
+   johnson-trotter ou notre algorithme personnel pour trouver le meilleur cycle */
+
+void init_strategies() {
+  ALGOS.algo_bc[JOHN_TROT] = &best_cycle;
+  ALGOS.algo_bc[PERSONNAL] = &f;
+}
+
 int main(int argc, char *argv[]) {	
   /* Déclarations des variables (à compléter) */
   
@@ -106,7 +113,27 @@ int main(int argc, char *argv[]) {
   double temps;
   List* regroups = NULL; //c'est la qu'on stocke la liste des regroupements (qui sont des listes)
   List* it = NULL;
-  List* bc_list = NULL; //liste de struct BC
+  List *cycles_costs = NULL;
+  List *ret;
+
+  Algo_Name algo_to_use;
+  
+  if (argc<3) {
+    printf("2 paramètres sont attendus : 1) nom du fichier de données, 2) nom de l'algorithme pour la résolution de la phase 2\nJOHN_TROT pour l'algorithme johnson-trotter ou PERSONNAL pour notre algorithme.\n");
+    exit(1);
+  }
+
+  if(strcmp(argv[2], M_JOHN_TROT.name) == 0) {
+    algo_to_use = M_JOHN_TROT.num;
+  } else if(strcmp(argv[2], M_PERSONNAL.name) == 0) {
+    algo_to_use = M_PERSONNAL.num;
+  } else {
+    printf("Les algos disponibles sont : JOHN_TROT et PERSONNAL\n");
+    exit(1);
+  }
+  
+  /* initialisation de la structure des strategys possibles */
+  init_strategies();
   
   /* Chargement des données à partir d'un fichier */
   
@@ -138,43 +165,10 @@ int main(int argc, char *argv[]) {
 
   //phase2
   //Résolution de chaque instance du voyageur de commerce pour chaque regroupement
-#ifdef RESOL_JOHN_TROT
-  BC* bc = NULL;
 
   it = regroups;
   while(it) {
-    bc = best_cycle(p.C, ((List*)it->head));
-#ifdef D_COUT_CYCLE
-    printf("cout : %d\n", bc->cout);
-#endif
-    bc_list = push((void*)bc, bc_list);
-    pop(it->head);
-    it = pop(it);
-  }
-
-#ifdef D_PARCOURS_COUT
-  int i_debug;
-  BC *bc_debug;
-  it = bc_list;
-  printf("DEBUG\n[Cout] : parcours\n"); 
-  while(it) {
-    bc_debug = (BC*)it->head;
-    printf("[%d] : 0, ", bc_debug->cout);
-    for(i_debug=0 ; i_debug<bc_debug->size ; ++i_debug) {
-      printf("%d, ", bc_debug->t[i_debug]);
-    }
-    printf("0\n");
-    it = it->tail;
-  }
-  printf("ENDEBUG\n");
-#endif 
-
-#else // ! RESOL_JOHN_TROT
-  List *cycles_costs = NULL;
-  List *ret;
-  it = regroups;
-  while(it) {
-    ret = f(p.C, ((List*)it->head));
+    ret = ALGOS.algo_bc[algo_to_use](p.C, ((List*)it->head));
 #ifdef D_COUT_CYCLE
     printf("cout : %d\n", (int)ret->head);
 #endif
@@ -201,18 +195,15 @@ int main(int argc, char *argv[]) {
 #endif
 
 
-#endif // RESOL_JOHN_TROT
-
-
   //programmation et résolution de l'instance glpk
 
   
+
+  
   //vidange mémoire
-  it = bc_list;
-  while(bc_list) {
-    free(((BC*)bc_list->head)->t);
-    free(bc_list->head);
-    bc_list = pop(bc_list);
+  while(cycles_costs) {
+    free_list((List*)cycles_costs->head);
+    cycles_costs = pop(cycles_costs);
   }
   /* Problème résolu, arrêt du chrono */
   
