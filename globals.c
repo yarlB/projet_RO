@@ -98,3 +98,17 @@ int len(List* l) {
   }
   return acc;
 }
+
+
+
+List* copy(List *l) {
+  List *ret = NULL;
+  List **itt = &ret;
+  while(l) {
+    *itt = push(l->head, NULL);
+    itt = &((*itt)->tail);
+    l = l->tail;
+  }
+  return ret;
+}
+
