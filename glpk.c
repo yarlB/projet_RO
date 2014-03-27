@@ -7,6 +7,7 @@ void go_glpk_go(List *couts, int len_list, int nb_clients) {
 	List *it;
 	
 	glp_prob *prob;
+	/*On crée les len_list variables = */
 	double x[len_list];
 	
 	//create_prob
@@ -16,7 +17,7 @@ void go_glpk_go(List *couts, int len_list, int nb_clients) {
 	
 	//dire a glpk qu'on a len_list variables
 	
-	for(it=couts ; it ; it = it->tail) {
+	for(it=couts ; it ; it=it->tail) {
 	
 	}
 }
