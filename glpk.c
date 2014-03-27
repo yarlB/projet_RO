@@ -3,12 +3,12 @@
 #include <string.h>
 #include <glpk.h> /* Nous allons utiliser la bibliothèque de fonctions de GLPK */
 
-void go_glpk_go(List *regroup, int len_list, int nb_clients, double capacite_drone) {
+void go_glpk_go(List *regroup, int len_list, int nb_clients) {
 	List *it;
 	List *it_it;
 	#define NBco len_list //nombre de coûts = regroupements
 	#define NBcl nb_clients
-	#define NBCONTR 1+nb_clients
+	#define NBCONTR nb_clients
 	#define NBVAR (NBco + NBcl)
 	glp_prob *prob; // déclaration d'un pointeur sur le problème
 	
@@ -28,10 +28,8 @@ void go_glpk_go(List *regroup, int len_list, int nb_clients, double capacite_dro
 	glp_set_prob_name(prob, "voyageur");
 	glp_set_obj_dir(prob, GLP_MIN);
 	
-	/*On ajoute les contraintes du problème avec ses bornes, i.e. la somme des poids ne doit pas dépasser la capacité du drone, et chaque client est visité une et une seule fois*/
+	/*On ajoute les contraintes du problème avec ses bornes, i.e. chaque client est visité une et une seule fois*/
 	glp_add_rows(prob, NBCONTR);
-	
-	glp_set_row_bnds(prob, 1, GLP_UP, 0.0, capacite_drone);
 	
 	for(i = 2;i <= NBCONTR-1;i++)
 	{
