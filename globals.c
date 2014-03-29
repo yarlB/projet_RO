@@ -14,8 +14,8 @@
 #define D_F
 #endif
 
-
-
+//si le pointeur passé en paramètre est NULL, affiche un message d'erreur et exit
+//utile pour vérifier la cohérence après une allocation mémoire
 void failloc(void* ptr) {
   if(!ptr) {
     fprintf(stderr, "Fail alloc\n");
@@ -98,7 +98,6 @@ int len(List* l) {
   }
   return acc;
 }
-
 
 
 List* copy(List *l) {

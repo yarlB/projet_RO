@@ -35,10 +35,7 @@ List* counting_sort(int* demands, int nbclients) {
 
 /*
   Retourne une liste de listes de numéros de clients : tous les regroupements possibles de clients dont la somme des demande ne dépasse pas capacity.
-  Après utilisation de la liste retournée, pour désallocation complete de la mémoire:
-  1/ free_list(la_liste);
-  2/ Free_Allocs();
- */
+*/
 List* enum_regroups(int* demands, int nbclients, int capacity) {
   List* bases_stack = NULL; //pile des prochaines bases
   Base* base = NULL; //base courante
@@ -53,7 +50,7 @@ List* enum_regroups(int* demands, int nbclients, int capacity) {
   base->list = push((void*)clients, base->list);
   bases_stack = push((void*)base, bases_stack);
   base = NULL;
-
+  
   while(bases_stack) {
     free(base);
     base = (Base*)bases_stack->head;
@@ -68,7 +65,6 @@ List* enum_regroups(int* demands, int nbclients, int capacity) {
       if (calcul <= capacity) {
 	tmplist = push(itclients->head, base->list);
 
-	//Push_Alloc(tmplist);
 	
 	regroups = push(tmplist, regroups); //on ajoute le nouveau regroupement à la liste de regroupements
 	tmplist = push((void*)itclients->tail, tmplist); //on ajoute a la liste l'iterateur vers la liste des clients à

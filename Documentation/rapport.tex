@@ -1,12 +1,17 @@
-B1;2802;0c\documentclass[a4paper,8pt]{report}
+\documentclass[a4paper,10pt]{report}
 \usepackage[francais]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath}
+
 \title{Rapport du projet de Recherche Opérationnelle} 
 \author{NOBLET Yvan, GIBAUD Lary}
 
+\newcommand{\segm}[1]{[\![1\,;#1]\!]}
+
 \begin{document}
+\renewcommand{\labelitemi}{$\bullet$}
+
 
 \date{}
 \maketitle
@@ -35,14 +40,98 @@ ligne 2 est :
 les lignes suivantes sont :
 \end{verbatim}
 
-\subsection{Ce qui est demandé}
+\subsection{Formalisation du problème}
 
-Formellement, nous est donné :
-\begin[label=\textbullet]{itemize}
+On nous donne :
 
-\item $\Omega$, un ensemble de numéros de clients, $\Omega = [|1,2,\cdots,n|]$. 
+\begin{itemize}
 
-\item $\Delta$, une matrice $n\times n$ telle que le nombre à l'intersection de la ligne $i$ et de la colonne $j$ représente le coût ou la distance pour aller du client $i$ au client $j$.
+\item $\Omega$, un ensemble de numéros de clients, $\Omega = \segm{n}$. 
+
+\item $\Delta$, une matrice $n\times n$ telle que le nombre (entier) à l'intersection de la ligne $i$ et de la colonne $j$ représente le coût ou la distance pour aller du client $i$ au client $j$.
+
+\item $Dem$, une fonction donnant la demande (volume ou poids) de chaque client.
+
+\item $Cap$, la capacité des drones (tous les drones ont la même capacité).
 
 \end{itemize}
+
+\paragraph{}
+On nous demande d'écrire un programme effectuant trois étapes :
+
+\begin{enumerate}
+
+\item Enumérer les regroupements possibles de clients. Ce sont tous les ensembles de clients dont la somme des demandes est inférieur à la capacité d'un drone :
+\begin{equation*}
+  \theta = \{\; a \subseteq \Omega \mid \Sigma_{x \in a}^{} (Dem[x]) \le Cap \; \}
+\end{equation*}
+
+\item Pour chacun de ces regroupements, déterminer la plus courte tournée partant du dépôt, visitant une fois chaque client, et revenant au dépôt. Cela revient à trouver, pour tout regroupement, le chemin le plus court partant du dépot(client $0$), passant par tous les clients du regroupement et retournant au dépot.
+\begin{equation*}
+  \begin{array}{l}
+    \text{Soit } a \in \theta, |a| = t.\\
+    \big(bc(a) = (a_0, a_1, \ldots, a_t, a_{t+1}) \big) \iff\\
+    \big(\forall i,j \in \segm{t},\quad a_i,a_j \in a \land (i \neq j \implies a_i \neq a_j) \quad\land\\ 
+    a_0 = a_{t+1} = 0 \quad\land\\
+    \sum_{i=0}^{t} \Delta[a_i,a_{i+1}] \text{ est minimale par permutation des $a_i$}\big)
+    \end{array}
+\end{equation*}
+
+\item En déduire une instance de problème de partitionnement d’ensemble, puis la résoudre. Ayant, pour chacun des regroupements, le coût minimum associé, il ne reste qu'à trouver la combinaison de regroupements permettant de livrer tous les clients et assurant une distance parcourut minimale. Ceci est formalisé dans le sujet du projet.
+
+\end{enumerate}
+
+\section{Choix tactiques et techniques}
+
+\subsection{Organisation des fichiers}
+Le programme est découpé en trois fichiers :
+\begin{description}
+\item[globals.c] contient :
+  \begin{itemize}
+  \item Des directives préprocesseur \emph{\#define} pour pouvoir compiler en mode débuggage.
+  \item Les définitions de deux structures de données et les fonctions/procédures associées : \emph{List} et \emph{Base}.
+  \end{itemize}
+\item[fonctions.c] contient :
+  \begin{itemize}
+  \item Les fonctions/procédures pour résoudre l'étape 1.
+  \item Les fonctions/procédures pour résoudre l'étape 2.
+  \end{itemize}
+\item[projet\_NOBLET\_GIBAUD.c] contient le squelette rempli.
+\end{description}
+    
+\subsection{Organisation du code et des données}
+
+\subsubsection{Introduction}
+Nous avons décider de ne faire qu'une description minimale des algorithmes écrits,
+parce que ce serait comme de les réécrires.
+Le code source est à votre disposition, commenté.
+Nos retrouvailles avec le C furent des plus plaisantes.
+Néanmoins, après nous être amusés avec les pointeurs (entre autres) et avoir une certaine quantité de code fonctionnel,
+il était trop tard pour réécrire le tout de façon générique,
+générale\footnote{Utilisation d'une \emph{Base} dans la phase 1 mais utilisation d'une \emph{List} dans la phase 2
+  avec l'algorithme 'maison' alors que l'un joue le rôle de l'autre (et vice-versa), on aurait du donc simplement
+  utilisé seulement des \emph{List}.}, modulaire, etc. Bref, il était trop tard pour avoir un code réellement propre.
+
+
+\subsubsection{Choix des structures de données}
+Comme annoncé ci-dessus, nous utilisons des listes\footnote{Voir \emph{globals.c} ainsi que la note 1.}.
+Nous avons choisi cette structure de données pour sa simplicité ainsi que son efficacité en termes de complexité temporelle
+pour :
+\begin{itemize}
+\item l'ajout en tête,
+\item la suppression en tête.
+\end{itemize}
+Ces deux opérations étant effectuées en temps constant.
+
+Nous utilisons également des tableaux, en C...
+
+\subsubsection{Enumération des regroupements}
+Nous avions tout d'abord pensé l'algorithme récursivement, puis l'avons ``dérécursifier'' par un tant que et l'ajout d'une
+pile\footnote{ou \emph{stack}, voir \emph{fonction.c}, une pile est une bête liste.}.
+
+\verb%List* enum_regroups(int* demands, int nbclients, int capacity);% 
+
+Cette fonction commence par effectuer\footnote{Appel de counting\_sort.} un tri linéaire (tri casier) des clients par rapport à la taille de leur demande. 
+
+
 \end{document}
