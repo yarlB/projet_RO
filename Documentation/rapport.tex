@@ -1,4 +1,4 @@
-\documentclass[a4paper,10pt]{report}
+\documentclass[a4paper,10pt]{article}
 \usepackage[francais]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -106,6 +106,7 @@ Nous avons décider de ne faire qu'une description minimale des algorithmes écr
 parce que ce serait comme de les réécrires.
 Le code source est à votre disposition, commenté.
 Nos retrouvailles avec le C furent des plus plaisantes.
+
 Néanmoins, après nous être amusés avec les pointeurs (entre autres) et avoir une certaine quantité de code fonctionnel,
 il était trop tard pour réécrire le tout de façon générique,
 générale\footnote{Utilisation d'une \emph{Base} dans la phase 1 mais utilisation d'une \emph{List} dans la phase 2
@@ -121,17 +122,88 @@ pour :
 \item l'ajout en tête,
 \item la suppression en tête.
 \end{itemize}
-Ces deux opérations étant effectuées en temps constant.
+Ces deux opérations étant effectuées en temps constant. Nous avons opté pour des listes de \verb+(void*)+, cela nous 
+permet d'avoir des listes d'entier, de listes, d'entiers et de listes, ...
 
-Nous utilisons également des tableaux, en C...
+Nous utilisons également des tableaux C...
 
 \subsubsection{Enumération des regroupements}
 Nous avions tout d'abord pensé l'algorithme récursivement, puis l'avons ``dérécursifier'' par un tant que et l'ajout d'une
-pile\footnote{ou \emph{stack}, voir \emph{fonction.c}, une pile est une bête liste.}.
+pile\footnote{\emph{stack}, voir \emph{fonction.c}, une pile est une bête liste.}. Afin de rester clairs et concis, nous
+allons expliquer les algorithmes, quand ce sera possible et quand il ont été pensé de cette manière, de façon récursive,
+même si nous les avons transformé en algorithmes de type impératif pour des raisons de performance
+\footnote{le C ne gérant pas la récursion terminale, entre autres.}.
 
+\paragraph{}
 \verb%List* enum_regroups(int* demands, int nbclients, int capacity);% 
 
-Cette fonction commence par effectuer\footnote{Appel de counting\_sort.} un tri linéaire (tri casier) des clients par rapport à la taille de leur demande. 
+Cette fonction commence par effectuer\footnote{Appel de counting\_sort.} un tri linéaire (tri casier) des clients
+par rapport à la taille de leur demande. Informellement, voilà ce qui se passe:
+
+On dispose de deux variables importantes : \emph{base} et 
+\emph{rest}. \emph{base} stocke un ensemble de clients, ainsi que la somme de leurs demandes, \emph{rest} est un ensemble
+de clients\footnote{Ces clients sont des clients n'apparaissant pas dans \emph{base}.} triés par demande croissante
+à tester (ie : est-ce que sa demande sommée à la demande de \emph{base} dépasse la capacité d'un drone?).
+
+Plusieurs cas se présentent :
+\begin{enumerate}
+\item \emph{rest} est vide. Dans ce cas c'est qu'on est à une feuille du parcours de notre arbre
+  \footnote{L'algorithme peut être vu comme un parcours en profondeur d'abord d'un arbre n-aire, n étant le nombre
+  de clients.}.
+\item \emph{rest} n'est pas vide. Dans ce cas on a une liste de clients potentiellements ajoutable à la base pour constituer
+  de nouveaux regroupements. On parcours donc les sous-listes de \emph{rest}, tant que la tête est un client que l'on peut
+  ajouter, on appel récursivement \emph{enum\_regroups} avec la nouvelle base, et la queue de la sous-liste actuelle de
+  \emph{rest}. 
+  
+\fbox{
+  \begin{minipage}{\linewidth}
+    Deux choses sont essentielles ici :
+    \begin{enumerate}
+    \item Quand un client n'est pas ajoutable, les clients suivants non plus (clients ordonnés par leur demande).
+    \item Quand un client est ajoutable, le reste avec lequel on fait un appel récursif n'est pas \emph{rest} privée du 
+      client mais la queue de la liste dont le client est la tête. Cela garantit l'unicité des regroupements générés.
+    \end{enumerate}
+  \end{minipage}
+}
+
+\paragraph{De la gestion de la mémoire.}
+
+Lorsque nous ajoutons une nouvelle base et (ce qui est la même chose) un nouveau regroupement, nous ne faisons pas une copie
+de la base, nous ajoutons simplement en tête de la base le nouveau client. Etant donnés :
+\begin{enumerate}
+  \item L'ajout de nouveaux regroupements se fait dans une liste utilisée comme une pile.
+  \item La structure spécifique de la constitution des regroupements.
+  \item Nous avons besoin de parcourir la liste des regroupements
+    \footnote{ou de depiler entièrement.} pour effectuer la phase 2.
+\end{enumerate}
+Il nous est simple de libérer la mémoire, de façon symétrique à laquelle nous l'avons allouée.
+
+
+\end{enumerate}
+
+\subsubsection{Enumeration des tournées}
+
+\begin{quote}
+  Nous avons implémentés deux algorithmes différents.
+\end{quote}
+\paragraph{Algorithme 1 : Johnson-Trotter.}
+
+Le premier algorithme est une implémentation de l'algorithme d'énumération complète des permutations Johnson-Trotter.
+On utilise une paire de tableaux, on définit la structure de données nécessaire au fonctionnement de l'algorithme
+\footnote{paire entier * direction}.
+
+\paragraph{Algorithme 2 : Algorithme maison.}
+
+La structure du second algorithme est très similaire à la structure de l'algorithme d'énumération des regroupements
+\footnote{S'étant levé du bon pied et de bon matin le jour de l'écriture de cet algorithme, l'auteur à fait de gros
+  efforts. Ainsi, cet algorithme est le mieux commenté, et en anglais! }. 
+On utilise le fait de se trouver dans un repère euclidien et donc de disposer de l'inégalité triangulaire pour ``coupé'',
+dès lors qu'on à un majorant, si la distance du chemin actuel (non complet, ie : tous les clients du regroupement
+n'ont pas encore été visités) + la distance du dernier visité au dépot dépasse le majorant.
+
+\paragraph{Conclusion.}
+
+L'algorithme 2 offre un certain intérêt pour les jeux de données plus difficiles puisqu'il ``coupe''.
 
 
 \end{document}
