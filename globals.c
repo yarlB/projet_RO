@@ -1,18 +1,4 @@
-#include <stdlib.h> //exit
-#include <stdio.h> //fprintf
-#include <string.h> //malloc
-#include <math.h> //INFINITY
-
-
-#ifdef DEBUG
-#define D_LONGUEUR_REGROUPS
-#define D_AFFICHAGE_REGROUPS
-#define D_COUT_CYCLE
-#define D_PARCOURS_COUT
-#define D_CALL_BEST_CYCLE
-#define D_WHILE_BEST_CYCLE
-#define D_F
-#endif
+#include "globals.h"
 
 //si le pointeur passé en paramètre est NULL, affiche un message d'erreur et exit
 //utile pour vérifier la cohérence après une allocation mémoire
@@ -22,13 +8,6 @@ void failloc(void* ptr) {
     exit(1);
   }
 }
-
-//assez parlant
-typedef struct list List;
-struct list {
-  void *head;
-  List *tail;
-};
 
 //ajout d'un élément en tête de liste
 List* push(void* head, List *tail) {
@@ -54,13 +33,6 @@ void free_list(List *list) {
     list = pop(list);
   }
 }
-
-//un ensemble de demandes est une liste... on conserve la somme des demandes des clients de la liste
-typedef struct base Base;
-struct base {
-  int size;
-  List* list;
-};
 
 Base* empty_base() {
   Base* base = NULL;

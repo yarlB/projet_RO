@@ -1,7 +1,4 @@
-#ifndef FONCTIONS_INCL
-#define FONCTIONS_INCL
-
-#include "globals.c"
+#include "fonctions.h"
 
 //utilise le tri casier pour fournir une liste de clients(numéros de 1 à nbclients) triée
 List* counting_sort(int* demands, int nbclients) {
@@ -85,13 +82,6 @@ List* enum_regroups(int* demands, int nbclients, int capacity) {
 }
 
 
-typedef struct bc BC;
-struct bc {
-  int cout;
-  int *t;
-  int size;
-};
-
 BC* make_bc(int size) {
   BC* bc = NULL;
   bc = calloc(1, sizeof(*bc));
@@ -101,12 +91,6 @@ BC* make_bc(int size) {
   bc->size = size;
   return bc;
 }
-
-typedef struct dir_int Dir_Int;
-struct dir_int {
-  int i;
-  char dir; //-1 or 1
-};
 
 
 inline void swap(Dir_Int *T, int pos1, int pos2) {
@@ -351,6 +335,5 @@ f(int **C, List *regroup) {
 }
 
 
-#endif
 
 

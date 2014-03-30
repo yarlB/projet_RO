@@ -1,15 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <glpk.h> /* Nous allons utiliser la bibliothèque de fonctions de GLPK */
-
-void go_glpk_go(List *regroups, int len_list, int nb_clients) {
+void go_glpk_go(List *regroups, int nb_clients) {
   List *it, *itit;
   glp_prob *prob; // déclaration d'un pointeur sur le problème
   int *ia;
   int *ja;
   double *ar; // déclaration des 3 tableaux servant à définir la matrice "creuse" des contraintes
   int nbcreux, i, pos, row;
+  int len_list = len(regroups);
   
   char nomcontr[nb_clients +1][20];
   char nomvar[len_list +1][20]; 
@@ -71,22 +67,23 @@ void go_glpk_go(List *regroups, int len_list, int nb_clients) {
     }
   }
   
+  glp_load_matrix(prob, nbcreux, ia, ja, ar);
+  
   /* Optionnel : écriture de la modélisation dans un fichier (TRES utile pour debugger!) */
   
   glp_write_lp(prob,NULL,"Does_androids_dream_of_electric_sheep.lp");
   
   /* Résolution, puis lecture des résultats */	
   
-  glp_simplex(prob,NULL);	glp_intopt(prob,NULL); /* Résolution */
+  glp_simplex(prob,NULL);	
+  glp_intopt(prob,NULL); /* Résolution */
   z = glp_mip_obj_val(prob);
  
 
   printf("z = %lf\n",z);
-  /*for(i = 0;i < NBVAR;i++) printf("x%c = %d, ",'B'+i,(int)(x[i] + 0.5)); /* un cast est ajouté, x[i] pourrait être égal à 0.99999... / 
+  /*for(i = 0;i < NBVAR;i++) printf("x%c = %d, ",'B'+i,(int)(x[i] + 0.5)); un cast est ajouté, x[i] pourrait être égal à 0.99999...
     puts("");*/
   
   /* libération mémoire */
   glp_delete_prob(prob);
-  
-  return 0;
 }
