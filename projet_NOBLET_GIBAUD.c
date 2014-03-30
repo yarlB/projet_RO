@@ -106,7 +106,6 @@ void init_strategies() {
   ALGOS.algo_bc[PERSONNAL] = &f;
 }
 
-
 void glpk_phase(List *regroups, int nb_clients) {
   List *it, *itit;
   glp_prob *prob; // déclaration d'un pointeur sur le problème
@@ -116,8 +115,8 @@ void glpk_phase(List *regroups, int nb_clients) {
   int nbcreux, i, pos, row;
   int len_list = len(regroups);
   
-  char nomcontr[nb_clients +1][20];
-  char nomvar[len_list +1][20]; 
+  char nomcontr[nb_clients][20];
+  char nomvar[len_list][20]; 
   
   
   /*On crée les "len_list" (nombre de regroupements) variables*/
@@ -125,16 +124,19 @@ void glpk_phase(List *regroups, int nb_clients) {
   /*Résultat de la fonction objectif*/
   double z;
   
-         
+  
   /* Création d'un problème (initialement vide) */
   prob = glp_create_prob(); /* allocation mémoire pour le problème */
   glp_set_prob_name(prob, "Does androids dream of electric sheep?");
   glp_set_obj_dir(prob, GLP_MIN);
-	
+  
   /*On ajoute les contraintes du problème avec ses bornes, i.e. chaque client est visité une et une seule fois*/
+#ifdef D_GLPK
+  printf("DEBUG_GLPK nombre de contraintes = %d\n", nb_clients);
+#endif
   glp_add_rows(prob, nb_clients);
   
-  for(i = 2;i <= nb_clients;i++) {
+  for(i = 1;i <= nb_clients;i++) {
     /* partie optionnelle : donner un nom aux contraintes */
     sprintf(nomcontr[i-1], "client %d livré", i);
     glp_set_row_name(prob, i, nomcontr[i-1]); /* Affectation du nom à la contrainte i */
@@ -142,9 +144,11 @@ void glpk_phase(List *regroups, int nb_clients) {
     /* partie indispensable : les bornes sur les contraintes */
     glp_set_row_bnds(prob, i, GLP_FX, 1.0, 0.0);
   }	
-  
-	
+  	
   /* Déclaration du nombre de variables : len_list */  
+#ifdef D_GLPK
+  printf("DEBUG_GLPK nombre de variables = %d\n", len_list);
+#endif
   glp_add_cols(prob, len_list);
   
   /* On précise le type des variables, les indices commencent à 1 également pour les variables! */
@@ -161,7 +165,7 @@ void glpk_phase(List *regroups, int nb_clients) {
   
   /* définition des coefficients des variables dans la fonction objectif */
   
-  for(nbcreux=0, i=1, it=regroups;i <= len_list;++i, it=it->tail, nbcreux+=len((List*)it->head))
+  for(nbcreux=0, i=1, it=regroups;i < len_list ; ++i, it=it->tail, nbcreux+=len((List*)it->head))
     glp_set_obj_coef(prob, i, (int)((List*)it->head)->head);	
   
   ia = (int *) malloc ((1 + nbcreux) * sizeof(int));
@@ -169,9 +173,9 @@ void glpk_phase(List *regroups, int nb_clients) {
   ar = (double *) malloc ((1 + nbcreux) * sizeof(double));
   
   for(pos=1, row=0, it=regroups; it ; it=it->tail, ++row) {
-    for(itit=(List*)it->head ; itit ; itit=itit->tail) {
+    for(itit=((List*)it->head)->tail ; itit ; itit=itit->tail, ++pos) {
       ia[pos] = row;
-      ja[pos] = (int)itit->head;
+      ja[pos] = (int)itit->head - 1;
       ar[pos] = 1.0;
     }
   }
@@ -288,7 +292,7 @@ int main(int argc, char *argv[]) {
 #endif
   
   //programmation et résolution de l'instance glpk
-  glkp_phase(cycles_costs, p.nblieux);
+  glpk_phase(cycles_costs, p.nblieux);
   
   
   //vidange mémoire

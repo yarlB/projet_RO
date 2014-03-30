@@ -92,12 +92,7 @@ BC* make_bc(int size) {
   return bc;
 }
 
-
-inline void swap(Dir_Int *T, int pos1, int pos2) {
-  Dir_Int tmp = T[pos1];
-  T[pos1] = T[pos2];
-  T[pos2] = tmp;
-}
+extern inline void swap(Dir_Int *T, int pos1, int pos2);
 
 int step(Dir_Int *T, int size) {
   int i;
