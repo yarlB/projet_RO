@@ -112,15 +112,13 @@ void glpk_phase(List *regroups, int nb_clients) {
   int *ia;
   int *ja;
   double *ar; // déclaration des 3 tableaux servant à définir la matrice "creuse" des contraintes
-  int nbcreux, i, pos, row;
+  int nbcreux, i, pos, col;
   int len_list = len(regroups);
   
   char nomcontr[nb_clients][20];
   char nomvar[len_list][20]; 
   
   
-  /*On crée les "len_list" (nombre de regroupements) variables*/
-  double x[len_list +1];
   /*Résultat de la fonction objectif*/
   double z;
   
@@ -165,21 +163,37 @@ void glpk_phase(List *regroups, int nb_clients) {
   
   /* définition des coefficients des variables dans la fonction objectif */
   
-  for(nbcreux=0, i=1, it=regroups;i < len_list ; ++i, it=it->tail, nbcreux+=len((List*)it->head))
-    glp_set_obj_coef(prob, i, (int)((List*)it->head)->head);	
+  for(nbcreux=0, i=1, it=regroups ; i <= len_list ; nbcreux += len((List*)it->head) - 1, ++i, it=it->tail)
+    glp_set_obj_coef(prob, i, (int)((List*)it->head)->head);
+
+
+#ifdef D_GLPK
+  printf("nbcreux = %d\n", nbcreux);
+#endif
   
   ia = (int *) malloc ((1 + nbcreux) * sizeof(int));
   ja = (int *) malloc ((1 + nbcreux) * sizeof(int));
   ar = (double *) malloc ((1 + nbcreux) * sizeof(double));
   
-  for(pos=1, row=0, it=regroups; it ; it=it->tail, ++row) {
-    for(itit=((List*)it->head)->tail ; itit ; itit=itit->tail, ++pos) {
-      ia[pos] = row;
-      ja[pos] = (int)itit->head - 1;
+  for(pos=1, it=regroups, col=1 ; it ; it=it->tail, ++col) {
+    for (itit=((List*)it->head)->tail ; itit ; itit=itit->tail, ++pos) {
+#ifdef D_GLPK
+      printf("Contrainte client %d,", (int)itit->head);
+      printf("Regroupement %d\n", col);
+#endif
+      ia[pos] = (int)itit->head;
+      ja[pos] = col;
       ar[pos] = 1.0;
     }
+#ifdef D_GLPK
+    printf("col : %d, it->tail : %p\n", col, (void*)it->tail);
+#endif
   }
-  
+
+#ifdef D_GLPK
+    printf("COUCOU\n");
+#endif
+
   glp_load_matrix(prob, nbcreux, ia, ja, ar);
   
   /* Optionnel : écriture de la modélisation dans un fichier (TRES utile pour debugger!) */
@@ -188,15 +202,19 @@ void glpk_phase(List *regroups, int nb_clients) {
   
   /* Résolution, puis lecture des résultats */	
   
-  glp_simplex(prob,NULL);	
+  glp_simplex(prob,NULL);
   glp_intopt(prob,NULL); /* Résolution */
   z = glp_mip_obj_val(prob);
  
 
-  printf("z = %lf\n",z);
-  /*for(i = 0;i < NBVAR;i++) printf("x%c = %d, ",'B'+i,(int)(x[i] + 0.5)); un cast est ajouté, x[i] pourrait être égal à 0.99999...
-    puts("");*/
-  
+  printf("coût total = %lf\n",z);
+  printf("Les tournées suivantes sont choisies :\n");
+  for(it=regroups, i=1 ; it ; it=it->tail , ++i) {
+    if(glp_mip_col_val(prob,i)) {
+      print_list(((List*)it->head)->tail);
+      printf("Pour un coût de %d\n", (int)((List*)it->head)->head);
+    }
+  }
   /* libération mémoire */
   glp_delete_prob(prob);
   free(ia); free(ja); free(ar);
@@ -290,9 +308,15 @@ int main(int argc, char *argv[]) {
   }
   printf("ENDEBUG\n");
 #endif
-  
+
+
+  crono_stop();
+  temps = crono_ms()/1000,0;
+  printf("Temps avant resolution glpk : %f\n", temps);
   //programmation et résolution de l'instance glpk
-  glpk_phase(cycles_costs, p.nblieux);
+  crono_start();
+
+  glpk_phase(cycles_costs, p.nblieux-1);
   
   
   //vidange mémoire
@@ -303,7 +327,7 @@ int main(int argc, char *argv[]) {
   /* Problème résolu, arrêt du chrono */
   
   crono_stop();
-  temps = crono_ms()/1000,0;
+  temps += crono_ms()/1000,0;
   
   /* Affichage des résultats (à compléter) OUI OUI!! */
   
