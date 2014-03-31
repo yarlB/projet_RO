@@ -7,7 +7,7 @@ ls_with_dir () {
 for file in $( ls_with_dir "A/" ; ls_with_dir "B/" )
 do
     basefile=$1$(basename $file)
-    ( exec1="./projet $file PERSONNAL_ALGORITHM > $basefile.palog" ;
+    ( exec1="./projet $file PERSONNAL > $basefile.palog" ;
     echo $exec1 ; 
     eval $exec1 ) &
     ( exec2="./projet $file JOHN_TROT > $basefile.jtlog" ;

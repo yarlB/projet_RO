@@ -193,9 +193,9 @@ void glpk_phase(List *regroups, int nb_clients) {
 #ifdef D_GLPK
     printf("COUCOU\n");
 #endif
-
+    
   glp_load_matrix(prob, nbcreux, ia, ja, ar);
-  
+
   /* Optionnel : écriture de la modélisation dans un fichier (TRES utile pour debugger!) */
   
   glp_write_lp(prob,NULL,"Does_androids_dream_of_electric_sheep.lp");
