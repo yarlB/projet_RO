@@ -23,7 +23,7 @@ Ceci est le rapport du projet de recherche opérationnelle :
  de tournée de véhicule avec capacité}.
 
 Le but est de fournir un programme permettant de définir un plan de livraison de clients par des drones. 
-Ce but est rempli par un programme écrit en langage C et l'utilisation de la bibliothèque GLPK.
+Ce but est atteint par un programme écrit en langage C et l'utilisation de la bibliothèque GLPK.
 
 \section{Analyse}
 
@@ -35,9 +35,9 @@ Le squelette du programme C nous est donné. Celui-ci contient les inclusions de
 
 Deux jeux de données nous sont fournis (les répertoires A et B) ainsi que l'exemple de l'énoncé (exemple.dat). Le format du fichier de données est ainsi :
 \begin{verbatim}
-ligne 1 est :
-ligne 2 est :
-les lignes suivantes sont :
+ligne 1 est : nombre de clients
+ligne 2 est : capacité d'un drone
+les lignes suivantes sont : le distancier
 \end{verbatim}
 
 \subsection{Formalisation du problème}
@@ -61,19 +61,21 @@ On nous demande d'écrire un programme effectuant trois étapes :
 
 \begin{enumerate}
 
-\item Enumérer les regroupements possibles de clients. Ce sont tous les ensembles de clients dont la somme des demandes est inférieur à la capacité d'un drone :
+\item Enumérer les regroupements possibles de clients. Ce sont tous les ensembles de clients dont la somme des demandes est inférieure à la capacité d'un drone :
 \begin{equation*}
   \theta = \{\; a \subseteq \Omega \mid \Sigma_{x \in a}^{} (Dem[x]) \le Cap \; \}
 \end{equation*}
 
-\item Pour chacun de ces regroupements, déterminer la plus courte tournée partant du dépôt, visitant une fois chaque client, et revenant au dépôt. Cela revient à trouver, pour tout regroupement, le chemin le plus court partant du dépot(client $0$), passant par tous les clients du regroupement et retournant au dépot.
+\item Pour chacun de ces regroupements, déterminer la plus courte tournée partant du dépôt, visitant une et une seule fois chaque client, et revenant au dépôt. Cela revient à trouver, pour tout regroupement, le chemin le plus court partant du dépot(client $0$), passant par tous les clients du regroupement et retournant au dépot.
 \begin{equation*}
   \begin{array}{l}
     \text{Soit } a \in \theta, |a| = t.\\
-    \big(bc(a) = (a_0, a_1, \ldots, a_t, a_{t+1}) \big) \iff\\
+    \big(bc(a)\footnote{best cycle} = (a_0, a_1, \ldots, a_t, a_{t+1}) \big) \iff\\
     \big(\forall i,j \in \segm{t},\quad a_i,a_j \in a \land (i \neq j \implies a_i \neq a_j) \quad\land\\ 
     a_0 = a_{t+1} = 0 \quad\land\\
-    \sum_{i=0}^{t} \Delta[a_i,a_{i+1}] \text{ est minimale par permutation des $a_i$}\big)
+    \sum_{i=0}^{t} \Delta[a_i,a_{i+1}] = 
+    min_{(b_1, \ldots, b_t) \text{permutation des } (a_1, \ldots, a_t)} 
+    \sum_{i=0}^{t} \Delta[b_i,b_{i+1}], b_0 = b_{t+1} = 0\big).
     \end{array}
 \end{equation*}
 
@@ -86,51 +88,47 @@ On nous demande d'écrire un programme effectuant trois étapes :
 \subsection{Organisation des fichiers}
 Le programme est découpé en trois fichiers :
 \begin{description}
-\item[globals.c] contient :
+\item[globals.c/globals.h] contient :
   \begin{itemize}
   \item Des directives préprocesseur \emph{\#define} pour pouvoir compiler en mode débuggage.
   \item Les définitions de deux structures de données et les fonctions/procédures associées : \emph{List} et \emph{Base}.
   \end{itemize}
-\item[fonctions.c] contient :
+\item[fonctions.c/fonctions.h] contient :
   \begin{itemize}
   \item Les fonctions/procédures pour résoudre l'étape 1.
   \item Les fonctions/procédures pour résoudre l'étape 2.
   \end{itemize}
+\item[strategy.c] contient une structure de données permettant de choisir entre deux algorithmes à l'exécution
+  pour résoudre l'étape 2.
 \item[projet\_NOBLET\_GIBAUD.c] contient le squelette rempli.
+\item[script.sh] script bash permettant de lancer le programme (ses deux versions) sur tous les jeux de données, et
+  de stocker dans un répertoire approrpié les résultats.
 \end{description}
     
 \subsection{Organisation du code et des données}
 
 \subsubsection{Introduction}
-Nous avons décider de ne faire qu'une description minimale des algorithmes écrits,
-parce que ce serait comme de les réécrires.
+Nous avons décidé de ne faire qu'une description minimale des algorithmes écrits,
+parce que ce serait comme les réécrires.
 Le code source est à votre disposition, commenté.
-Nos retrouvailles avec le C furent des plus plaisantes.
-
-Néanmoins, après nous être amusés avec les pointeurs (entre autres) et avoir une certaine quantité de code fonctionnel,
-il était trop tard pour réécrire le tout de façon générique,
-générale\footnote{Utilisation d'une \emph{Base} dans la phase 1 mais utilisation d'une \emph{List} dans la phase 2
-  avec l'algorithme 'maison' alors que l'un joue le rôle de l'autre (et vice-versa), on aurait du donc simplement
-  utilisé seulement des \emph{List}.}, modulaire, etc. Bref, il était trop tard pour avoir un code réellement propre.
-
 
 \subsubsection{Choix des structures de données}
 Comme annoncé ci-dessus, nous utilisons des listes\footnote{Voir \emph{globals.c} ainsi que la note 1.}.
 Nous avons choisi cette structure de données pour sa simplicité ainsi que son efficacité en termes de complexité temporelle
-pour :
+\footnote{temps constant.} pour :
 \begin{itemize}
 \item l'ajout en tête,
 \item la suppression en tête.
 \end{itemize}
-Ces deux opérations étant effectuées en temps constant. Nous avons opté pour des listes de \verb+(void*)+, cela nous 
+Nous avons opté pour des listes de \verb+(void*)+, cela nous 
 permet d'avoir des listes d'entier, de listes, d'entiers et de listes, ...
 
 Nous utilisons également des tableaux C...
 
 \subsubsection{Enumération des regroupements}
-Nous avions tout d'abord pensé l'algorithme récursivement, puis l'avons ``dérécursifier'' par un tant que et l'ajout d'une
-pile\footnote{\emph{stack}, voir \emph{fonction.c}, une pile est une bête liste.}. Afin de rester clairs et concis, nous
-allons expliquer les algorithmes, quand ce sera possible et quand il ont été pensé de cette manière, de façon récursive,
+Nous avions tout d'abord pensé l'algorithme récursivement, puis nous l'avons ``dérécursifier'' par un ``tant que'' et l'ajout 
+d'une pile\footnote{\emph{stack}, voir \emph{fonction.c}, une pile est une bête liste.}. Afin de rester clairs et concis, 
+nous allons expliquer les algorithmes, quand ce sera possible et quand il ont été pensé de cette manière, de façon récursive,
 même si nous les avons transformé en algorithmes de type impératif pour des raisons de performance
 \footnote{le C ne gérant pas la récursion terminale, entre autres.}.
 
@@ -150,8 +148,8 @@ Plusieurs cas se présentent :
 \item \emph{rest} est vide. Dans ce cas c'est qu'on est à une feuille du parcours de notre arbre
   \footnote{L'algorithme peut être vu comme un parcours en profondeur d'abord d'un arbre n-aire, n étant le nombre
   de clients.}.
-\item \emph{rest} n'est pas vide. Dans ce cas on a une liste de clients potentiellements ajoutable à la base pour constituer
-  de nouveaux regroupements. On parcours donc les sous-listes de \emph{rest}, tant que la tête est un client que l'on peut
+\item \emph{rest} n'est pas vide. Dans ce cas on a une liste de clients potentiellement ajoutable à la base pour constituer
+  de nouveaux regroupements. On parcourt donc les sous-listes de \emph{rest}, tant que la tête est un client que l'on peut
   ajouter, on appel récursivement \emph{enum\_regroups} avec la nouvelle base, et la queue de la sous-liste actuelle de
   \emph{rest}. 
   
@@ -176,7 +174,7 @@ de la base, nous ajoutons simplement en tête de la base le nouveau client. Etan
   \item Nous avons besoin de parcourir la liste des regroupements
     \footnote{ou de depiler entièrement.} pour effectuer la phase 2.
 \end{enumerate}
-Il nous est simple de libérer la mémoire, de façon symétrique à laquelle nous l'avons allouée.
+Il nous est simple de libérer la mémoire, de façon symétrique à son allocation.
 
 
 \end{enumerate}
@@ -195,13 +193,20 @@ On utilise une paire de tableaux, on définit la structure de données nécessai
 \paragraph{Algorithme 2 : Algorithme maison.}
 
 La structure du second algorithme est très similaire à la structure de l'algorithme d'énumération des regroupements. 
-On utilise le fait de se trouver dans un repère euclidien et donc de disposer de l'inégalité triangulaire pour ``coupé'',
-dès lors qu'on à un majorant, si la distance du chemin actuel (non complet, ie : tous les clients du regroupement
+On utilise le fait de se trouver dans un repère euclidien et donc de disposer de l'inégalité triangulaire pour ``couper'',
+dès lors qu'on a un majorant, si la distance du chemin actuel (non complet, ie : tous les clients du regroupement
 n'ont pas encore été visités) + la distance du dernier visité au dépot dépasse le majorant.
 
 \paragraph{Conclusion.}
 
 L'algorithme 2 offre un certain intérêt pour les jeux de données plus difficiles puisqu'il ``coupe''.
 
+\section{Idées d'amélioration}
+Utiliser des algorithmes dédiés au problème du voyageur de commerce, plus efficaces qu'une énumérations
+(algorithme de Little, si on veut rester dans l'optimalité).
+Utilisation d'heuristiques, choisir d'accepter une solution approchée dans des cas trop difficiles.
+Ne pas énumérer tous les regroupements possible, heuristique ``plus proches voisins'' ou quelque chose.
+Pour le voyageur de commerce, heuristique ``insertion la moins chère'', on est dans un repère euclidien.
+Une petite journée de recherche des heuristiques existantes et des dizaines d'implémentations seraient possibles.
 
 \end{document}
