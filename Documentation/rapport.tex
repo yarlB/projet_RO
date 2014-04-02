@@ -102,7 +102,7 @@ Le programme est découpé en trois fichiers :
   pour résoudre l'étape 2.
 \item[projet\_NOBLET\_GIBAUD.c] contient le squelette rempli.
 \item[script.sh] script bash permettant de lancer le programme (ses deux versions) sur tous les jeux de données, et
-  de stocker dans un répertoire approrpié les résultats.
+  de stocker les résultats dans un répertoire approprié.
 \end{description}
     
 \subsection{Organisation du code et des données}
@@ -110,7 +110,7 @@ Le programme est découpé en trois fichiers :
 \subsubsection{Introduction}
 Nous avons décidé de ne faire qu'une description minimale des algorithmes écrits,
 parce que ce serait comme les réécrires.
-Le code source est à votre disposition, commenté.
+Le code source commenté est à votre disposition.
 
 \subsubsection{Choix des structures de données}
 Comme annoncé ci-dessus, nous utilisons des listes\footnote{Voir \emph{globals.c} ainsi que la note 1.}.
@@ -126,7 +126,7 @@ permet d'avoir des listes d'entier, de listes, d'entiers et de listes, ...
 Nous utilisons également des tableaux C...
 
 \subsubsection{Enumération des regroupements}
-Nous avions tout d'abord pensé l'algorithme récursivement, puis nous l'avons ``dérécursifier'' par un ``tant que'' et l'ajout 
+Nous avions tout d'abord pensé l'algorithme récursivement, puis nous l'avons ``dérécursifié'' par un ``tant que'' et l'ajout 
 d'une pile\footnote{\emph{stack}, voir \emph{fonction.c}, une pile est une bête liste.}. Afin de rester clairs et concis, 
 nous allons expliquer les algorithmes, quand ce sera possible et quand il ont été pensé de cette manière, de façon récursive,
 même si nous les avons transformé en algorithmes de type impératif pour des raisons de performance
@@ -136,7 +136,7 @@ même si nous les avons transformé en algorithmes de type impératif pour des r
 \verb%List* enum_regroups(int* demands, int nbclients, int capacity);% 
 
 Cette fonction commence par effectuer\footnote{Appel de counting\_sort.} un tri linéaire (tri casier) des clients
-par rapport à la taille de leur demande. Informellement, voilà ce qui se passe:
+par rapport à la taille de leur demande. Informellement, voilà ce qu'il se passe:
 
 On dispose de deux variables importantes : \emph{base} et 
 \emph{rest}. \emph{base} stocke un ensemble de clients, ainsi que la somme de leurs demandes, \emph{rest} est un ensemble
@@ -205,8 +205,12 @@ L'algorithme 2 offre un certain intérêt pour les jeux de données plus diffici
 Utiliser des algorithmes dédiés au problème du voyageur de commerce, plus efficaces qu'une énumérations
 (algorithme de Little, si on veut rester dans l'optimalité).
 Utilisation d'heuristiques, choisir d'accepter une solution approchée dans des cas trop difficiles.
-Ne pas énumérer tous les regroupements possible, heuristique ``plus proches voisins'' ou quelque chose.
+Ne pas énumérer tous les regroupements possible, heuristique ``plus proches voisins''.
 Pour le voyageur de commerce, heuristique ``insertion la moins chère'', on est dans un repère euclidien.
 Une petite journée de recherche des heuristiques existantes et des dizaines d'implémentations seraient possibles.
+
+\section{Conclusion}
+Finalement, on se rend compte que la façon de résoudre le problème n'est pas la bonne. On ne peut résoudre les instances 
+trop difficiles. Chacune des trois phases prend effectivement un temps trop important\footnote{voir le dossier logs}.
 
 \end{document}

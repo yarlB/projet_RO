@@ -1,0 +1,37 @@
+Temps avant resolution glpk : 0.012000
+Writing problem data to `Does_androids_dream_of_electric_sheep.lp'...
+10373 lines were written
+GLPK Simplex Optimizer, v4.45
+24 rows, 2948 columns, 9599 non-zeros
+      0: obj =   0.000000000e+00  infeas =  2.400e+01 (24)
+*    30: obj =   8.377000000e+03  infeas =  0.000e+00 (2)
+*    86: obj =   5.903846154e+03  infeas =  1.760e-16 (0)
+OPTIMAL SOLUTION FOUND
+GLPK Integer Optimizer, v4.45
+24 rows, 2948 columns, 9599 non-zeros
+2948 integer variables, all of which are binary
+Integer optimization begins...
++    86: mip =     not found yet >=              -inf        (1; 0)
++   147: >>>>>   6.143000000e+03 >=   5.915000000e+03   3.7% (10; 0)
++   156: >>>>>   5.932000000e+03 >=   5.927000000e+03 < 0.1% (8; 3)
++   159: mip =   5.932000000e+03 >=     tree is empty   0.0% (0; 19)
+INTEGER OPTIMAL SOLUTION FOUND
+coût total = 5932.000000
+Les tournées suivantes sont choisies :
+19, 20, 1, 
+Pour un coût de 832
+12, 13, 23, 
+Pour un coût de 939
+16, 5, 11, 
+Pour un coût de 1052
+4, 8, 
+Pour un coût de 547
+3, 9, 15, 
+Pour un coût de 331
+6, 18, 22, 
+Pour un coût de 937
+21, 14, 17, 
+Pour un coût de 470
+2, 24, 10, 7, 
+Pour un coût de 824
+Temps : 0.260000

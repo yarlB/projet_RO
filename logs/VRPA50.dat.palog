@@ -1,0 +1,81 @@
+Temps avant resolution glpk : 0.988000
+Writing problem data to `Does_androids_dream_of_electric_sheep.lp'...
+165846 lines were written
+GLPK Simplex Optimizer, v4.45
+49 rows, 44145 columns, 167584 non-zeros
+      0: obj =   0.000000000e+00  infeas =  4.900e+01 (49)
+*    66: obj =   1.796233333e+04  infeas =  0.000e+00 (2)
+*   261: obj =   1.153453030e+04  infeas =  9.577e-17 (0)
+OPTIMAL SOLUTION FOUND
+GLPK Integer Optimizer, v4.45
+49 rows, 44145 columns, 167584 non-zeros
+44145 integer variables, all of which are binary
+Integer optimization begins...
++   261: mip =     not found yet >=              -inf        (1; 0)
++   270: mip =     not found yet >=   1.154200000e+04        (4; 0)
++   286: mip =     not found yet >=   1.154500000e+04        (7; 0)
++   312: mip =     not found yet >=   1.154500000e+04        (10; 0)
++   338: mip =     not found yet >=   1.154500000e+04        (13; 0)
++   381: >>>>>   1.174500000e+04 >=   1.154500000e+04   1.7% (16; 0)
++   408: mip =   1.174500000e+04 >=   1.156100000e+04   1.6% (18; 1)
++   432: >>>>>   1.173700000e+04 >=   1.156100000e+04   1.5% (20; 1)
++   459: mip =   1.173700000e+04 >=   1.158200000e+04   1.3% (22; 4)
++   495: mip =   1.173700000e+04 >=   1.158700000e+04   1.3% (25; 5)
++   511: mip =   1.173700000e+04 >=   1.158700000e+04   1.3% (29; 5)
++   524: >>>>>   1.167600000e+04 >=   1.158700000e+04   0.8% (30; 5)
+Time used: 60.1 secs.  Memory used: 21.2 Mb.
++   533: mip =   1.167600000e+04 >=   1.158700000e+04   0.8% (27; 15)
++   564: mip =   1.167600000e+04 >=   1.158700000e+04   0.8% (29; 16)
++   642: mip =   1.167600000e+04 >=   1.159800000e+04   0.7% (26; 20)
++   676: mip =   1.167600000e+04 >=   1.159800000e+04   0.7% (25; 22)
++   694: mip =   1.167600000e+04 >=   1.159800000e+04   0.7% (29; 22)
++   720: mip =   1.167600000e+04 >=   1.159800000e+04   0.7% (33; 22)
++   733: mip =   1.167600000e+04 >=   1.159800000e+04   0.7% (36; 22)
++   790: mip =   1.167600000e+04 >=   1.159800000e+04   0.7% (37; 23)
++   825: mip =   1.167600000e+04 >=   1.161200000e+04   0.5% (34; 27)
++   860: mip =   1.167600000e+04 >=   1.162400000e+04   0.4% (32; 30)
++   903: mip =   1.167600000e+04 >=   1.162400000e+04   0.4% (27; 35)
+Time used: 120.7 secs.  Memory used: 31.3 Mb.
++   938: mip =   1.167600000e+04 >=   1.163400000e+04   0.4% (24; 40)
++   967: mip =   1.167600000e+04 >=   1.165000000e+04   0.2% (21; 45)
++   990: mip =   1.167600000e+04 >=   1.165100000e+04   0.2% (14; 56)
++   998: >>>>>   1.166600000e+04 >=   1.165600000e+04 < 0.1% (11; 59)
++  1001: mip =   1.166600000e+04 >=     tree is empty   0.0% (0; 117)
+INTEGER OPTIMAL SOLUTION FOUND
+coût total = 11666.000000
+Les tournées suivantes sont choisies :
+13, 
+Pour un coût de 12
+34, 41, 
+Pour un coût de 976
+1, 49, 
+Pour un coût de 315
+25, 33, 
+Pour un coût de 745
+17, 20, 32, 
+Pour un coût de 316
+40, 29, 14, 
+Pour un coût de 230
+30, 28, 43, 
+Pour un coût de 274
+18, 10, 23, 
+Pour un coût de 1416
+7, 39, 27, 
+Pour un coût de 172
+44, 9, 45, 
+Pour un coût de 727
+11, 22, 24, 
+Pour un coût de 420
+19, 48, 35, 
+Pour un coût de 839
+37, 3, 5, 2, 
+Pour un coût de 878
+16, 47, 38, 
+Pour un coût de 951
+36, 4, 21, 
+Pour un coût de 1284
+15, 42, 46, 6, 
+Pour un coût de 853
+26, 12, 8, 31, 
+Pour un coût de 1258
+Temps : 44.275000

@@ -1,16 +1,6 @@
-- "e" √† inf√©rieure (2.3.1)
-- pr√©ciser le passage unique par chaque point (2.3.2)
-- pr√©ciser "bc(.)"
-- d√©cid√© (3.2.1)
-- -de (3.2.1)
-- revoir phrase "ces deux..."
-- puis nous l'avons (3.2.3)
-- "tant que" (3.2.3) avec guillemets
-- ce qu'il (3.2.3)
-- stocke ou "stockent ? (3.2.3)
-- potentiellement (3.2.3.2)
-- parcourt (3.2.3.2)
-- revoir formulation "Il nous est simple de lib√©rer la m√©moire, de fa√ßon sym√©trique √† laquelle
-nous l'avons allou√©e."
-- couper (3.2.4)
-- a (3.2.4)
+- et de stocker les rÈsultats dans un rÈpertoire appropriÈ. (3.1)
+- Le code source commentÈ est ‡ votre disposition. (3.2.1)
+- "dÈrÈcursifiÈ" (3.2.3)
+- nbclients..capacity (tout en anglais ou tout en franÁais, pas de mix) (3.2.3)
+- voil‡ ce qu'il se passe (3.2.3)
+- "ou quelque chose" ?? (c'est quoi quelque chose ?) (4)
