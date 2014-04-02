@@ -1,6 +1,0 @@
-- et de stocker les résultats dans un répertoire approprié. (3.1)
-- Le code source commenté est à votre disposition. (3.2.1)
-- "dérécursifié" (3.2.3)
-- nbclients..capacity (tout en anglais ou tout en français, pas de mix) (3.2.3)
-- voilà ce qu'il se passe (3.2.3)
-- "ou quelque chose" ?? (c'est quoi quelque chose ?) (4)
