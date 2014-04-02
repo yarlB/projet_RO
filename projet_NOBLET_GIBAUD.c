@@ -1,5 +1,5 @@
- /* NOM1 Prénom1
-    NOM2 Prénom2 */
+ /* NOBLET Yvan
+    GIBAUD Lary */
 
 #include <stdio.h>
 #include <stdlib.h>
