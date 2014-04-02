@@ -37,6 +37,7 @@ Deux jeux de données nous sont fournis (les répertoires A et B) ainsi que l'ex
 \begin{verbatim}
 ligne 1 est : nombre de clients
 ligne 2 est : capacité d'un drone
+ligne 3 est : demandes des clients
 les lignes suivantes sont : le distancier
 \end{verbatim}
 
@@ -102,7 +103,11 @@ Le programme est découpé en trois fichiers :
   pour résoudre l'étape 2.
 \item[projet\_NOBLET\_GIBAUD.c] contient le squelette rempli.
 \item[script.sh] script bash permettant de lancer le programme (ses deux versions) sur tous les jeux de données, et
-  de stocker les résultats dans un répertoire approprié.
+  de stocker les résultats dans un répertoire approprié\footnote{voir répertoire \emph{logs/}.}.
+\item[repertoire logs/] contient les fichiers ``*.jtlog'' correspondant aux résultats d'exécution avec l'algorithme 1
+  d'énumération des tournées et les fichiers ``*.palog'' correspondant aux résulats d'exécution avec l'algorithme 2. 
+  Contient également un script et les deux fichiers résultant de 
+  son exécution permettant de résumé les exécutions  \footnote{voir section \emph{Enumeration des tournées}.}.
 \end{description}
     
 \subsection{Organisation du code et des données}
@@ -197,9 +202,215 @@ On utilise le fait de se trouver dans un repère euclidien et donc de disposer d
 dès lors qu'on a un majorant, si la distance du chemin actuel (non complet, ie : tous les clients du regroupement
 n'ont pas encore été visités) + la distance du dernier visité au dépot dépasse le majorant.
 
-\paragraph{Conclusion.}
+\paragraph{Résumé des exécutions et conclusion.}
 
-L'algorithme 2 offre un certain intérêt pour les jeux de données plus difficiles puisqu'il ``coupe''.
+\begin{verbatim}
+jtlogs.resume : 
+
+fichier VRPA10.dat :
+-nombre de clients 10
+-temps avant glpk : 0.000000
+-temps total : 0.008000
+-moyenne des demandes 9
+-capacite drones : 30
+
+fichier VRPA15.dat :
+-nombre de clients 15
+-temps avant glpk : 0.000000
+-temps total : 0.008000
+-moyenne des demandes 9
+-capacite drones : 30
+
+fichier VRPA20.dat :
+-nombre de clients 20
+-temps avant glpk : 0.000000
+-temps total : 0.028000
+-moyenne des demandes 9
+-capacite drones : 30
+
+fichier VRPA25.dat :
+-nombre de clients 25
+-temps avant glpk : 0.012000
+-temps total : 0.260000
+-moyenne des demandes 8
+-capacite drones : 30
+
+fichier VRPA30.dat :
+-nombre de clients 30
+-temps avant glpk : 0.080000
+-temps total : 10.588000
+-moyenne des demandes 8
+-capacite drones : 30
+
+fichier VRPA35.dat :
+-nombre de clients 35
+-temps avant glpk : 0.012000
+-temps total : 7.696000
+-moyenne des demandes 9
+-capacite drones : 30
+
+fichier VRPA40.dat :
+-nombre de clients 40
+-temps avant glpk : 0.132000
+-temps total : 2.492000
+-moyenne des demandes 9
+-capacite drones : 30
+
+fichier VRPA45.dat :
+-nombre de clients 45
+-temps avant glpk : 0.212000
+-temps total : 24.253000
+-moyenne des demandes 9
+-capacite drones : 30
+
+fichier VRPA50.dat :
+-nombre de clients 50
+-temps avant glpk : 0.368000
+-temps total : 43.091000
+-moyenne des demandes 9
+-capacite drones : 30
+
+fichier VRPB10.dat :
+-nombre de clients 10
+-temps avant glpk : 0.000000
+-temps total : 0.012000
+-moyenne des demandes 6
+-capacite drones : 33
+
+fichier VRPB15.dat :
+-nombre de clients 15
+-temps avant glpk : 0.520000
+-temps total : 1.073000
+-moyenne des demandes 5
+-capacite drones : 33
+
+fichier VRPB20.dat :
+-nombre de clients 20
+-temps avant glpk : 30.173000
+-temps total : 736.957000
+-moyenne des demandes 5
+-capacite drones : 33
+
+fichier VRPB25.dat :
+-nombre de clients 25
+-temps avant glpk : 7.240000
+-temps total : 86.904000
+-moyenne des demandes 6
+-capacite drones : 33
+
+fichier VRPB30.dat :
+-nombre de clients 30
+-temps avant glpk : 120.915000
+-temps total : 788.649000
+-moyenne des demandes 5
+-capacite drones : 33
+
+
+
+palogs.resume : 
+
+fichier VRPA10.dat :
+-nombre de clients 10
+-temps avant glpk : 0.000000
+-temps total : 0.008000
+-moyenne des demandes 9
+-capacite drones : 30
+
+fichier VRPA15.dat :
+-nombre de clients 15
+-temps avant glpk : 0.000000
+-temps total : 0.008000
+-moyenne des demandes 9
+-capacite drones : 30
+
+fichier VRPA20.dat :
+-nombre de clients 20
+-temps avant glpk : 0.004000
+-temps total : 0.028000
+-moyenne des demandes 9
+-capacite drones : 30
+
+fichier VRPA25.dat :
+-nombre de clients 25
+-temps avant glpk : 0.032000
+-temps total : 0.284000
+-moyenne des demandes 8
+-capacite drones : 30
+
+fichier VRPA30.dat :
+-nombre de clients 30
+-temps avant glpk : 0.196000
+-temps total : 10.808000
+-moyenne des demandes 8
+-capacite drones : 30
+
+fichier VRPA35.dat :
+-nombre de clients 35
+-temps avant glpk : 0.028000
+-temps total : 7.756000
+-moyenne des demandes 9
+-capacite drones : 30
+
+fichier VRPA40.dat :
+-nombre de clients 40
+-temps avant glpk : 0.324000
+-temps total : 2.668000
+-moyenne des demandes 9
+-capacite drones : 30
+
+fichier VRPA45.dat :
+-nombre de clients 45
+-temps avant glpk : 0.524000
+-temps total : 24.701000
+-moyenne des demandes 9
+-capacite drones : 30
+
+fichier VRPA50.dat :
+-nombre de clients 50
+-temps avant glpk : 0.988000
+-temps total : 44.275000
+-moyenne des demandes 9
+-capacite drones : 30
+
+fichier VRPB10.dat :
+-nombre de clients 10
+-temps avant glpk : 0.004000
+-temps total : 0.024000
+-moyenne des demandes 6
+-capacite drones : 33
+
+fichier VRPB15.dat :
+-nombre de clients 15
+-temps avant glpk : 0.616000
+-temps total : 1.173000
+-moyenne des demandes 5
+-capacite drones : 33
+
+fichier VRPB20.dat :
+-nombre de clients 20
+-temps avant glpk : 22.921000
+-temps total : 727.834000
+-moyenne des demandes 5
+-capacite drones : 33
+
+fichier VRPB25.dat :
+-nombre de clients 25
+-temps avant glpk : 10.540000
+-temps total : 90.909000
+-moyenne des demandes 6
+-capacite drones : 33
+
+fichier VRPB30.dat :
+-nombre de clients 30
+-temps avant glpk : 93.561000
+-temps total : 760.211000
+-moyenne des demandes 5
+-capacite drones : 33
+
+\end{verbatim}
+
+L'algorithme 2 offre un certain intérêt pour les jeux de données plus difficiles puisqu'il ``coupe'', pas flagrant...
+
 
 \section{Idées d'amélioration}
 Utiliser des algorithmes dédiés au problème du voyageur de commerce, plus efficaces qu'une énumérations
